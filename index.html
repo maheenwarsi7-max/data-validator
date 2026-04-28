@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Data Source Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    --primary-mid:   #bfdbfe;
+    --success:       #059669;
+    --success-light: #ecfdf5;
+    --success-mid:   #6ee7b7;
+    --danger:        #dc2626;
+    --danger-light:  #fef2f2;
+    --danger-mid:    #fecaca;
+    --border:        #e2e8f0;
+    --border-focus:  #93c5fd;
+    --bg:            #f8fafc;
+    --surface:       #ffffff;
+    --text:          #0f172a;
+    --text-muted:    #64748b;
+    --text-faint:    #94a3b8;
+    --radius:        12px;
+    --radius-sm:     8px;
+    --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:     0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+
+  .header-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+    background: var(--primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .header-title h1 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .header-title p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .header-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--primary);
+    background: var(--primary-light);
+    border: 1px solid var(--primary-mid);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 36px 32px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    background: var(--primary-light);
+    border: 1px solid var(--primary-mid);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .intro-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--primary);
+  }
+
+  .intro p {
+    font-size: 13px;
+    color: #1e40af;
+    line-height: 1.65;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 18px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-header-text h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .card-header-text p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .card-body {
+    padding: 0 24px 24px;
+  }
+
+  /* ── TEXTAREA ── */
+  textarea {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  textarea:focus {
+    border-color: var(--border-focus);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+  }
+  textarea::placeholder { color: var(--text-faint); }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-label { display: block; cursor: pointer; }
+
+  .upload-zone {
+    border: 1.5px dashed #cbd5e1;
+    border-radius: var(--radius-sm);
+    padding: 36px 24px;
+    text-align: center;
+    background: var(--bg);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .upload-zone:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .upload-zone.loaded {
+    border-color: var(--success);
+    background: var(--success-light);
+    border-style: solid;
+  }
+
+  .upload-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .upload-zone:hover .upload-icon { background: var(--primary-mid); }
+  .upload-zone.loaded .upload-icon { background: var(--success-mid); }
+
+  .upload-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #64748b;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.15s;
+  }
+  .upload-zone:hover .upload-icon svg { stroke: var(--primary); }
+  .upload-zone.loaded .upload-icon svg { stroke: var(--success); }
+
+  .upload-main {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    transition: color 0.15s;
+  }
+  .upload-zone:hover .upload-main { color: var(--primary); }
+  .upload-zone.loaded .upload-main { color: var(--success); }
+
+  .upload-sub {
+    font-size: 12px;
+    color: var(--text-faint);
+    transition: color 0.15s;
+  }
+  .upload-zone.loaded .upload-sub { color: #34d399; }
+
+  input[type=file] { display: none; }
+
+  /* ── FILE PREVIEW ── */
+  .file-preview {
+    display: none;
+    margin-top: 14px;
+  }
+
+  .file-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .file-preview-header span {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+  }
+
+  .file-preview-header .divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .file-preview pre {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11.5px;
+    color: #475569;
+    line-height: 1.7;
+    max-height: 140px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ── STATS PILLS ── */
+  .stats-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--success);
+    background: var(--success-light);
+    border: 1px solid var(--success-mid);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── ERROR ── */
+  .error {
+    display: none;
+    font-size: 13px;
+    color: var(--danger);
+    background: var(--danger-light);
+    border: 1px solid var(--danger-mid);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── RUN BUTTON ── */
+  .run-btn {
+    width: 100%;
+    padding: 15px 24px;
+    background: var(--primary);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: -0.01em;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  }
+  .run-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+  }
+  .run-btn:active { transform: scale(0.99); }
+  .run-btn:disabled {
+    background: #93c5fd;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .run-btn svg {
+    width: 16px; height: 16px;
+    fill: none; stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .footer p {
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 16px;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    color: var(--text-faint);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-links a:hover { color: var(--primary); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+  @media (max-width: 600px) {
+    .container { padding: 24px 16px 48px; }
+    .header-inner { padding: 20px 16px; }
+    .header-badge { display: none; }
+    .footer { padding: 20px 16px 32px; flex-direction: column; gap: 8px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h7"/>
+          <circle cx="19" cy="18" r="3"/>
+          <path d="M19 15v3l2 1"/>
+        </svg>
+      </div>
+      <div class="header-title">
+        <h1>Data Source Agent</h1>
+        <p>Column mapping &amp; source verification</p>
+      </div>
+    </div>
+    <div class="header-badge">Powered by Claude</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="intro">
+    <svg class="intro-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>Enter your user story and upload your schema file. The agent will analyse which columns across your tables best satisfy the requirement — flagging best sources, ambiguities, gaps, and warnings.</p>
+  </div>
+
+  <!-- STEP 1: USER STORY -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-num">1</div>
+      <div class="card-header-text">
+        <h2>User Story / Requirement</h2>
+        <p>Paste the full requirement or acceptance criteria</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <textarea id="story" rows="7" placeholder="As a coordinator, I need one consolidated row per student with mock results in scheduled order (Official Result, Percentile, Net Correct, Assigned Tutor), so I can compare students without excessive scrolling or missing data..."></textarea>
+    </div>
+  </div>
+
+  <!-- STEP 2: FILE UPLOAD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-num">2</div>
+      <div class="card-header-text">
+        <h2>Schema / Data File</h2>
+        <p>Upload a schema export or any CSV — headers and tables are extracted automatically</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <label class="upload-label" for="schema-file">
+        <div class="upload-zone" id="schema-zone">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <polyline points="9 15 12 12 15 15"/>
+            </svg>
+          </div>
+          <div class="upload-main" id="upload-main">Click to upload CSV or schema file</div>
+          <div class="upload-sub" id="upload-sub">Supports .csv &nbsp;·&nbsp; .txt &nbsp;·&nbsp; .tsv</div>
+        </div>
+      </label>
+      <input type="file" id="schema-file" accept=".csv,.txt,.tsv" onchange="loadFile(event)">
+
+      <div class="file-preview" id="file-preview">
+        <div class="file-preview-header">
+          <span>Preview</span>
+          <div class="divider"></div>
+        </div>
+        <pre id="preview-text"></pre>
+        <div class="stats-row" id="stats-row"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error" id="error">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span id="error-text"></span>
+  </div>
+
+  <!-- RUN -->
+  <button class="run-btn" id="run-btn" onclick="runAgent()">
+    <svg viewBox="0 0 24 24">
+      <line x1="22" y1="2" x2="11" y2="13"/>
+      <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    </svg>
+    Send to Claude
+  </button>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Data Source Agent &nbsp;·&nbsp; Internal Use</p>
+  <div class="footer-links">
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="https://claude.ai" target="_blank">Claude</a>
+  </div>
+</div>
+
+<script>
+let fileContent = '';
+
+function loadFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const text = ev.target.result;
+    const lines = text.split('\n').filter(Boolean);
+    const header = lines[0].toLowerCase();
+    let extracted = '';
+    let tableCount = 0;
+    let colCount = 0;
+
+    if (header.includes('table_name') && header.includes('column_name')) {
+      const rows = lines.slice(1).map(l => l.split(',').map(s => s.trim().replace(/"/g, '')));
+      const tables = {};
+      rows.forEach(r => {
+        if (r[0] && r[1]) {
+          if (!tables[r[0]]) tables[r[0]] = [];
+          tables[r[0]].push(r[1]);
+        }
+      });
+      extracted = Object.entries(tables)
+        .map(([t, cols]) => `TABLE: "${t}"\nColumns: ${cols.join(', ')}`)
+        .join('\n\n');
+      tableCount = Object.keys(tables).length;
+      colCount = lines.length - 1;
+    } else {
+      const headers = lines[0];
+      const samples = lines.slice(1, 4).join('\n');
+      extracted = `TABLE: "${file.name.replace(/\.[^.]+$/, '')}"\nHeaders: ${headers}${samples ? '\nSample rows:\n' + samples : ''}`;
+      tableCount = 1;
+      colCount = headers.split(',').length;
+    }
+
+    fileContent = extracted;
+
+    const zone = document.getElementById('schema-zone');
+    zone.classList.add('loaded');
+    document.getElementById('upload-main').textContent = file.name;
+    document.getElementById('upload-sub').textContent = 'File loaded successfully';
+
+    const previewEl = document.getElementById('file-preview');
+    previewEl.style.display = 'block';
+    document.getElementById('preview-text').textContent = extracted.slice(0, 700) + (extracted.length > 700 ? '\n...' : '');
+
+    const statsEl = document.getElementById('stats-row');
+    statsEl.innerHTML = `
+      <div class="stat-pill">${tableCount} table${tableCount !== 1 ? 's' : ''} detected</div>
+      <div class="stat-pill">${colCount} columns</div>
+      <div class="stat-pill">${lines.length - 1} rows</div>
+    `;
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function showError(msg) {
+  const el = document.getElementById('error');
+  document.getElementById('error-text').textContent = msg;
+  el.style.display = 'flex';
+}
+
+function hideError() {
+  document.getElementById('error').style.display = 'none';
+}
+
+function runAgent() {
+  hideError();
+  const story = document.getElementById('story').value.trim();
+
+  if (!story) { showError('Please enter a user story or requirement.'); return; }
+  if (!fileContent) { showError('Please upload a schema or CSV file.'); return; }
+
+  const prompt = `You are a data source mapping agent. Analyze the tables below and identify which columns best satisfy the user story.
+
+For each match:
+- State the table name and column name
+- Give a confidence level (high / medium / low)
+- Explain why it matches
+- Flag if multiple sources exist for the same data (ambiguity)
+- Recommend the single best source with reasoning
+- Note any warnings (transformations needed, data quality etc.)
+
+=== DATA TABLES ===
+
+${fileContent}
+
+=== USER STORY ===
+
+${story}
+
+Please analyse and return your findings clearly structured.`;
+
+  const btn = document.getElementById('run-btn');
+
+  if (typeof sendPrompt === 'function') {
+    btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Sending...`;
+    btn.disabled = true;
+    sendPrompt(prompt);
+    setTimeout(() => {
+      btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send to Claude`;
+      btn.disabled = false;
+    }, 3000);
+  } else {
+    navigator.clipboard.writeText(prompt).then(() => {
+      btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied — paste into Claude`;
+      btn.style.background = '#059669';
+      setTimeout(() => {
+        btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send to Claude`;
+        btn.style.background = '';
+      }, 3000);
+    });
+  }
+}
+</script>
+</body>
+</html>
