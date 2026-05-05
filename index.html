@@ -559,13 +559,13 @@
   </div>
 
   <!-- RUN -->
-  <button class="run-btn" id="run-btn" onclick="openInClaude()">
+  <a class="run-btn" id="run-btn" href="#" target="_blank" onclick="return prepareLink(this)">
     <svg viewBox="0 0 24 24">
       <line x1="22" y1="2" x2="11" y2="13"/>
       <polygon points="22 2 15 22 11 13 2 9 22 2"/>
     </svg>
     Analyse with Claude ↗
-  </button>
+  </a>
 
   <!-- HOW IT WORKS -->
   <div class="how-it-works">
@@ -657,12 +657,12 @@ function hideError() {
   document.getElementById('error').style.display = 'none';
 }
 
-function openInClaude() {
+function prepareLink(anchor) {
   hideError();
   const story = document.getElementById('story').value.trim();
 
-  if (!story) { showError('Please enter a user story or requirement.'); return; }
-  if (!fileContent) { showError('Please upload a schema or CSV file.'); return; }
+  if (!story) { showError('Please enter a user story or requirement.'); return false; }
+  if (!fileContent) { showError('Please upload a schema or CSV file.'); return false; }
 
   const prompt = `You are a data source mapping agent. Analyze the tables below and identify which columns best satisfy the user story.
 
@@ -684,16 +684,8 @@ ${story}
 
 Please analyse and return your findings clearly structured.`;
 
-  const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
-  const newTab = window.open(url, '_blank');
-
-  if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
-    navigator.clipboard.writeText(prompt).then(() => {
-      showError('Popup was blocked — prompt copied to clipboard. Paste it into claude.ai.');
-    }).catch(() => {
-      showError('Please allow popups for this site, then try again.');
-    });
-  }
+  anchor.href = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+  return true;
 }
 </script>
 </body>
